@@ -18,7 +18,6 @@ async function isAuthenticated(req){
 
     return Promise.resolve(user)
   } catch (error) {
-    console.error("Authorizor Error", error)
     return Promise.reject(error)
   }
 }
@@ -29,6 +28,8 @@ module.exports.needsAuthorization = async (req, res, next) => {
 
     if (!user) return next(new NotAuthorizedError("Autenticação inválida"))
 
+    req.auth = { user }
+    next()
   } catch (error) {
     next(error)
   }
