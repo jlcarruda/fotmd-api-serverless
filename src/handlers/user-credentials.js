@@ -1,11 +1,10 @@
 const { app, serverless } = require('../header')
-const { DBConnection }  = require('../middlewares')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
 
 const { User } = require('../models')
 
-app.post('/users/auth', DBConnection, async (req, res, next) => {
+app.post('/users/auth', async (req, res, next) => {
   const { username } = req.body
 
   try {
@@ -54,7 +53,7 @@ app.post('/users/auth', DBConnection, async (req, res, next) => {
   }
 })
 
-app.post('/users/signup', DBConnection, async (req, res, next) => {
+app.post('/users/signup', async (req, res, next) => {
   const { username } = req.body
 
   try {
