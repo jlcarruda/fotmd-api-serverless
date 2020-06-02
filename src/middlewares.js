@@ -1,7 +1,10 @@
+const ErrorHandler = require('./middlewares/error-handler')
+
 const { DBConnection } = require('./middlewares/database')
 const { isAuthenticated } = require('./middlewares/authorization')
 
 module.exports = {
   DBConnection,
-  isAuthenticated
+  isAuthenticated,
+  ErrorHandler
 }

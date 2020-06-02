@@ -18,7 +18,8 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.16",
-    "serverless-http": "^2.5.0"
+    "serverless-http": "^2.5.0",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "serverless-offline": "^6.3.0"

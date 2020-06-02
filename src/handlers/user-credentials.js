@@ -1,6 +1,7 @@
 const { app, serverless } = require('../header')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
+const { ErrorHandler } = require('../middlewares')
 
 const { User } = require('../models')
 
@@ -35,20 +36,6 @@ app.post('/users/auth', async (req, res, next) => {
       }
     })
   } catch (error) {
-    if (error instanceof FailedAuthError) {
-      const { id, message, code } = err
-      return res.status(401).json({
-        errors: [
-          {
-            id,
-            code,
-            title: message
-          }
-        ]
-      })
-    }
-
-    console.error("Error on route auth", error)
     next(error)
   }
 })
@@ -87,24 +74,11 @@ app.post('/users/signup', async (req, res, next) => {
         token
       }
     })
-  } catch(err) {
-    if (err instanceof FailedSignUpError) {
-      const { id, message, code } = err
-      return res.status(401).json({
-        errors: [
-          {
-            id,
-            code,
-            title: message
-          }
-        ]
-      })
-    }
-
-    console.error('Error on route signup', err)
+  } catch(error) {
     next(error)
   }
 })
 
+app.use(ErrorHandler)
 
 module.exports.handler = serverless(app)
