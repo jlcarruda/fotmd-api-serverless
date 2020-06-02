@@ -1,3 +1,6 @@
+const { JsonWebTokenError } = require('jsonwebtoken')
+const { v4 } = require('uuid')
+
 const {
   CustomError,
   FailedSignUpError,
@@ -25,6 +28,25 @@ module.exports = (err, req, res, next) => {
           id,
           code,
           title: message
+        }
+      ]
+    })
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    const anotherError = new NotAuthorizedError("Token de autenticação inválido")
+    const { id, message, code } = anotherError
+    return res.status(401).json({
+      errors: [
+        {
+          id,
+          code,
+          message
+        },
+        {
+          id: v4(),
+          code: "ER-401-JWTOK-01",
+          message: err.message
         }
       ]
     })

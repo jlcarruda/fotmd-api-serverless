@@ -1,8 +1,8 @@
 const { app, serverless } = require('../header')
-const { isAuthenticated, ErrorHandler }  = require('../middlewares')
+const { needsAuthorization, ErrorHandler }  = require('../middlewares')
 const { NotAuthorizedError } = require('../errors')
 
-app.get('/users/characters', isAuthenticated, (req, res, next) => {
+app.get('/users/characters', needsAuthorization, (req, res, next) => {
   if (!req.auth || !req.auth.user) return next(new NotAuthorizedError("Acesso ao recurso solicitado foi negado"))
 
   try {
@@ -22,7 +22,7 @@ app.get('/users/characters', isAuthenticated, (req, res, next) => {
   }
 })
 
-app.get('/users/characters/:id', isAuthenticated, (req, res, next) => {
+app.get('/users/characters/:id', needsAuthorization, (req, res, next) => {
   const notAuthError = new NotAuthorizedError("Acesso ao recurso solicitado foi negado")
   if (!req.auth || !req.auth.user) return next(notAuthError)
 
