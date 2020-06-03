@@ -1,5 +1,13 @@
 const { model, models, Schema } = require('mongoose')
-const { MachineTypes } = require('../enums')
+const { MachineTypes, AttributeNames } = require('../enums')
+
+const AttributeBonusSchema = new Schema({
+  name: {
+    type: String,
+    enum: AttributeNames
+  },
+  value: Number
+}, { _id: false })
 
 const schema = new Schema({
   name: { type: String },
@@ -7,8 +15,9 @@ const schema = new Schema({
   vulnerability: { type: Number },
   network: { type: Number },
   requirements: {
-    system: [{ type: String, enum: MachineTypes }]
+    machine_types: [{ type: String, enum: MachineTypes }]
   },
+  attributes_bonuses: [ AttributeBonusSchema ],
   created_at: { type: Date, default: new Date() },
   updated_at: { type: Date, default: new Date() }
 })
