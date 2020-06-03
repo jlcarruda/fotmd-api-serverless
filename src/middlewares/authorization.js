@@ -4,10 +4,10 @@ const { User } = require('../models')
 
 async function isAuthenticated(req){
   const { authorization } = req.headers
-  const token = (authorization.match(/[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/) || [])[0]
+  const token = (authorization && authorization.match(/[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/) || [])[0]
 
   if (!token) {
-    return Promise.reject(new NotAuthorizedError("Autenticação inválida"))
+    return Promise.reject(new NotAuthorizedError("Não Autorizado"))
   }
 
   try {
