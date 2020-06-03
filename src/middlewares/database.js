@@ -8,7 +8,7 @@ module.exports.DBConnection = (req, res, next) => {
     return next()
   }
   mongoose.connection.on('error', connError => {
-    console.error(`[DB] Error while connecting to Database: \n ${conError}`)
+    console.error(`[DB] Error while connecting to Database: \n ${connError}`)
     next(connError)
   })
 

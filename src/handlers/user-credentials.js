@@ -10,9 +10,9 @@ app.post('/users/auth', async (req, res, next) => {
 
   try {
     const user = await User.findOne({ username })
-    if (!user) throw new FailedAuthError()
+    if (!user) throw new FailedAuthError("Credenciais inválidas")
     const okPassword = await user.comparePassword(req.body.password)
-    if (!okPassword) throw new FailedAuthError()
+    if (!okPassword) throw new FailedAuthError("Credenciais inválidas")
     const token = sign({
       username: user.username
     })

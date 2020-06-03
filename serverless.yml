@@ -23,14 +23,19 @@ service:
 plugins:
   - serverless-offline
 
+custom: ${file(serverless-variables.yml)}
+
 provider:
   name: aws
   runtime: nodejs12.x
   stage: ${opt:stage, "dev"}
   region: us-east-1
+  timeout: 10
   memorySize: 256
+  environment:
+    DB_URL: ${self:custom.mongodb.url}
+    TOKEN_SECRET: ${self:custom.token_secret}
 
-custom: ${file(./serverless-variables.yml)}
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -120,19 +125,13 @@ functions:
 #            path: /hello
 
 #    Define function environment variables here
-#    environment:
-#      variable2: value2
 
 # you can add CloudFormation resource templates here
-resources:
-  Resources:
-    DBCluster:
-      Type: 'AWS::DocDB::DBCluster'
-      DeletionPolicy: Delete
-      Properties:
-        MasterUsername: ${self:custom.docdb.username}
-        MasterUserPassword: ${self:custom.docdb.password}
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+# resources:
+#   Resources:
+#     DBCluster:
+#       Type: 'AWS::DocDB::DBCluster'
+#       DeletionPolicy: Delete
+#       Properties:
+#         MasterUsername: ${self:custom.docdb.username}
+#         MasterUserPassword: ${self:custom.docdb.password}
