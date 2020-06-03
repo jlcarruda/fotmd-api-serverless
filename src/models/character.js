@@ -1,4 +1,6 @@
 const { model, models, Schema, Types } = require('mongoose')
+const { MachineTypes } = require('../enums')
+
 const { ObjectId } = Types
 
 const schema = new Schema({
@@ -20,7 +22,12 @@ const schema = new Schema({
     sanity: { type: Number },
     adrenaline: { type: Number }
   },
-  // system: { type: ObjectId, ref: 'System' },
+  machine_type: {
+    type: String,
+    enum: MachineTypes
+  },
+  system: { type: ObjectId, ref: 'System' },
+  system_level: { type: Number },
   // model: { type: ObjectId, ref: 'MachineModel' },
   // motherboard: { type: ObjectId, ref: 'Motherboard' },
   // cpu: { type: ObjectId, ref: 'Cpu' },
@@ -29,7 +36,7 @@ const schema = new Schema({
 })
 
 schema.pre('save', function(next) {
-  if (this.isModified() {
+  if (this.isModified()) {
     this.updated_at = new Date()
   }
   next()
