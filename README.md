@@ -9,15 +9,15 @@ This project was born with the goal to create an API to handle the requests made
 * Response validation
 * Models
   * User Model <u>*(DONE)*</u>
-  * Character Model
+  * Character Model <u>*(DONE)*</u>
   * Table Model
   * Components Model
   * Character Creation models
-    * System Model
+    * System Model <u>*(DONE)*</u>
     * Machine Type Model
     * Machine Model
-* Error Handler
-* Custom Errors
+* Error Handler <u>*(DONE)*</u>
+* Custom Errors <u>*(DONE)*</u>
 
 <!-- * Database Connection setup function <u>*(DONE)*</u>
 * Decorators <u>*(1/2)*</u>
@@ -63,8 +63,8 @@ This project was born with the goal to create an API to handle the requests made
   * GET /fotmd/machine_types/:id
   * GET /fotmd/machine_models
   * GET /fotmd/machine_models/:id
-  * GET /fotmd/systems
-  * GET /fotmd/systems/:id
+  * GET /fotmd/systems <u>*(DONE)*</u>
+  * GET /fotmd/systems/:id <u>*(DONE)*</u>
   * GET /fotmd/components
   * GET /fotmd/components/:id
 * dm
