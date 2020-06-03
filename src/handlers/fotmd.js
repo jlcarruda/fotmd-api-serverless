@@ -18,10 +18,10 @@ const { System } = require('../models')
 
 app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
   try {
-    const systems = await System.find({})
+    const systems = await System.find({}).lean()
     res.status(200).json({
-      data: systems.map(s => {
-        const { _id, ...attributes } = s
+      data: systems.map(system => {
+        const { _id, ...attributes } = system
         return {
           type: "systems",
           id: _id,
