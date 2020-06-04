@@ -1,12 +1,11 @@
-const { User, Character, System } = require('./models')
-
 module.exports = {
   MachineTypes: [ 'cyborg', 'android', 'replicant' ],
   AttributeNames: ['agility', 'reflexes', 'charisma', 'dexterity', 'inteligence', 'criativity', 'persuasion', 'skill'],
-  ResourceTypes: {
+  ResourceTypes: ['users','characters','systems','tokens'],
+  ResourceTypesByModel: {
     User: 'users',
     Character: 'characters',
-    System: 'systems'
+    System: 'systems',
   },
   ModelsByResourceType: {
     users: 'User',

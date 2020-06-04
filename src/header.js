@@ -10,7 +10,7 @@ const { DBConnection } = require('./middlewares')
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.json({ type: "application/vnd.api+json" }))
 app.use(helmet())
 
 // JSON API content-type required header

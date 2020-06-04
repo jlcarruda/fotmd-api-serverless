@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Joi = require('@hapi/joi')
 const { CustomError, BadRequestError } = require('../errors')
-const { ModelsByResourceType, ResourceTypes } = require('../enums')
+const { ModelsByResourceType, ResourceTypesByModel, ResourceTypes } = require('../enums')
 const { ObjectId } = mongoose.Types
 
 function isValidId(id) {
@@ -20,34 +20,39 @@ function isRelation(type) {
 
 function validateResourceObject(attributes, resourceType) {
   try {
-    const { schema } = mongoose.models[ModelsByResourceType[resourceType]]
-    const schemaKeys = Object.keys(schema.obj)
+    let relationships = []
+    const resourceModel = mongoose.models[ModelsByResourceType[resourceType]]
+    if (resourceModel) {
+      const { schema } = resourceModel
+      const schemaKeys = Object.keys(schema.obj)
 
-    const relationships = schemaKeys.filter(k => {
-      if (k === '_id') return false
-      let attributeValue = schema.obj[k]
+      relationships = schemaKeys.filter(k => {
+        if (k === '_id') return false
+        let attributeValue = schema.obj[k]
 
-      return isRelation(attributeValue.type) || (Array.isArray(attributeValue) && isRelation(attributeValue[0].type))
-    }).map(relationKey => {
-      const attribute = attributes[relationKey]
-      delete attributes[relationKey]
-      if (!attribute || attribute.length === 0) return
-      const { _id, ...relAttributes } = attribute
-      const schemaRelation = schema.obj[relationKey]
+        return isRelation(attributeValue.type) || (Array.isArray(attributeValue) && isRelation(attributeValue[0].type))
+      }).map(relationKey => {
+        const attribute = attributes[relationKey]
+        delete attributes[relationKey]
+        if (!attribute || attribute.length === 0) return
+        const { _id, ...relAttributes } = attribute
+        const schemaRelation = schema.obj[relationKey]
 
-      let type;
-      if (Array.isArray(schemaRelation)) {
-        type = ResourceTypes[schemaRelation[0].ref]
-      } else {
-        type = ResourceTypes[schemaRelation.ref]
-      }
+        let type;
+        if (Array.isArray(schemaRelation)) {
+          type = ResourceTypesByModel[schemaRelation[0].ref]
+        } else {
+          type = ResourceTypesByModel[schemaRelation.ref]
+        }
 
-      return {
-        type,
-        id: _id,
-        attributes: relAttributes
-      }
-    }).filter(relation => relation !== undefined)
+        console.log("TYPE", type)
+        return {
+          type,
+          id: _id,
+          attributes: relAttributes
+        }
+      }).filter(relation => relation !== undefined)
+    }
 
     const respObj = {
       attributes
@@ -63,21 +68,23 @@ function validateResourceObject(attributes, resourceType) {
   }
 }
 
-function mountResponseObject(dbData, resourceType) {
-  const { _id, ...attributes } = dbData
+function mountResponseObject(data, resourceType) {
+  const { _id, ...attributes } = data
 
-  if (!(_id && isValidId(_id))) throw new Error("Data passed seems to be corrupted or incomplete")
+  if (_id && !isValidId(_id)) throw new Error("Data passed seems to be corrupted or incomplete")
 
   const resourceObject = validateResourceObject(attributes, resourceType)
 
-  return {
+  const response = {
     data: {
-      type: resourceType,
-      id: _id,
+      type: resourceObject.type || resourceType,
       attributes: resourceObject.attributes,
       relationships: resourceObject.relationships || undefined
     }
   }
+
+  if (_id) response.id = _id
+  return response
 }
 
 /**
@@ -86,16 +93,19 @@ function mountResponseObject(dbData, resourceType) {
  * @param {Object} resourceParams Parameters that describes the resource
  * @param {*} meta JSON:API Meta object to be added into the response
  */
-function responseWrapper ({ req, res, next }, { dbData, resourceType, successStatus = 200 }, meta) {
+function responseWrapper ({ req, res, next }, { data, resourceType = null, successStatus = 200 }, meta) {
   try {
-    if (!req || !res || !next || !dbData || !resourceType) throw new Error("Wrong or missing arguments for wrapper")
+    console.log("resourceType", req.resourceType)
+    if (!req || !res || !next || !data || (!resourceType && req && !req.resourceType)) throw new Error("Wrong or missing arguments for wrapper")
+
+    if (!resourceType) resourceType = req.resourceType
 
     let respObject
 
-    if (!Array.isArray(dbData)) {
-      respObject = mountResponseObject(dbData, resourceType)
+    if (!Array.isArray(data)) {
+      respObject = mountResponseObject(data, resourceType)
     } else {
-      respObject = dbData.map(doc => mountResponseObject(doc, resourceType))
+      respObject = data.map(doc => mountResponseObject(doc, resourceType))
     }
 
     if (meta){
@@ -112,6 +122,10 @@ function responseWrapper ({ req, res, next }, { dbData, resourceType, successSta
   }
 }
 
+function isEmptyObject(obj) {
+  return Object.keys(obj).length === 0 && obj.constructor === Object
+}
+
 /**
  * A Express middleware to check if the payload passed through the body is valid or not
  * @param {Object} req Express Request object
@@ -119,22 +133,28 @@ function responseWrapper ({ req, res, next }, { dbData, resourceType, successSta
  * @param {Function} next Express next function
  */
 function payloadValidator(req, res, next) {
-  if (!req.body && !req.params) return next()
+  if (isEmptyObject(req.body) && isEmptyObject(req.params)) return next()
 
-  if (req.body) {
+  if (!isEmptyObject(req.body)) {
     console.log("BODY", req.body)
     const payloadSchema = Joi.object({
       data: Joi.object({
-        type: Joi.string().required(),
+        id: Joi.string().allow(null),
+        type: Joi.string().required().valid(...ResourceTypes),
         attributes: Joi.object()
       })
     })
-
     const { error } = payloadSchema.validate(req.body)
     if (error) return next(new BadRequestError("Invalid payload"))
+
+    const { type, id, attributes } = req.body.data
+    req.body = attributes
+
+    if (id) req.body.id = id
+    req.resourceType = type
   }
 
-  if (req.params) {
+  if (!isEmptyObject(req.params)) {
     const paramsSchema = Joi.object({
       filter: Joi.object().allow(null),
       sort: Joi.string().allow(null),

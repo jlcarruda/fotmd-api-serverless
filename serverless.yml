@@ -77,7 +77,7 @@ functions:
     handler: src/handlers/user-credentials.handler
     events:
       - http:
-          path: users/auth
+          path: tokens
           method: POST
       - http:
           path: users/signup

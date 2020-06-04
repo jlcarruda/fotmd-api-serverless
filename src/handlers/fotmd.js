@@ -19,13 +19,13 @@ const { System } = require('../models')
 
 app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
   try {
-    const dbData = await System.find({}).lean()
+    const data = await System.find({}).lean()
     responseWrapper( {
       req,
       res,
       next
     }, {
-      dbData,
+      data,
       resourceType: 'systems'
     })
   } catch (error) {
@@ -36,13 +36,13 @@ app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
 app.get('/fotmd/systems/:id', needsAuthorization, async (req, res, next) => {
   const { id } = req.params
   try {
-    const dbData = await System.findOne({ _id: id }).lean()
+    const data = await System.findOne({ _id: id }).lean()
     responseWrapper( {
       req,
       res,
       next
     }, {
-      dbData,
+      data,
       resourceType: 'systems'
     })
   } catch (error) {

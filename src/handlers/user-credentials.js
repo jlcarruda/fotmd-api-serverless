@@ -6,7 +6,7 @@ const { responseWrapper } = require('../utils/jsonapi')
 
 const { User } = require('../models')
 
-app.post('/users/auth', async (req, res, next) => {
+app.post('/tokens', async (req, res, next) => {
   const { username } = req.body
 
   try {
@@ -17,17 +17,16 @@ app.post('/users/auth', async (req, res, next) => {
     const token = sign({
       username: user.username
     })
-    const { password, ...attributes } = user._doc
+
     responseWrapper(
       {
         req,
         res,
         next
       }, {
-        dbData: attributes,
-        resourceType: 'users'
-      }, {
-        token
+        data: {
+          token
+        }
       }
     )
   } catch (error) {
