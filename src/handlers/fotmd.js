@@ -1,6 +1,7 @@
 const { app, serverless } = require('../header')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
 const { ErrorHandler, needsAuthorization } = require('../middlewares')
+const { JSONApiResponseWrapper } = require('../utils/wrappers')
 
 const { System } = require('../models')
 
@@ -18,33 +19,29 @@ const { System } = require('../models')
 
 app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
   try {
-    const systems = await System.find({}).lean()
-    res.status(200).json({
-      data: systems.map(system => {
-        const { _id, ...attributes } = system
-        return {
-          type: "systems",
-          id: _id,
-          attributes
-        }
-      })
+    const dbData = await System.find({}).lean()
+    JSONApiResponseWrapper({
+      req,
+      res,
+      next,
+      dbData,
+      resourceType: 'systems'
     })
   } catch (error) {
     next(error)
   }
 })
 
-app.get('/fotmd/systems/:id', needsAuthorization, async (req, res) => {
+app.get('/fotmd/systems/:id', needsAuthorization, async (req, res, next) => {
   const { id } = req.params
   try {
-    const system = await System.findOne({ _id: id }).lean()
-    const { _id, ...attributes } = system
-    res.status(200).json({
-      data: {
-        type: "systems",
-        id: _id,
-        attributes
-      }
+    const dbData = await System.findOne({ _id: id }).lean()
+    JSONApiResponseWrapper({
+      req,
+      res,
+      next,
+      dbData,
+      resourceType: 'systems'
     })
   } catch (error) {
     next(error)

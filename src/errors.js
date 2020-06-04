@@ -19,10 +19,15 @@ class FailedSignUpError extends CustomError {
   code = 'ER-401-SIGNUP-01'
 }
 
+class BadRequestError extends CustomError {
+  code = 'ER-400-REQ-01'
+}
+
 
 module.exports = {
   CustomError,
   FailedAuthError,
   NotAuthorizedError,
-  FailedSignUpError
+  FailedSignUpError,
+  BadRequestError
 }

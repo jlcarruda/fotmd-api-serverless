@@ -12,6 +12,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(helmet())
 
+// JSON API content-type required header
+app.use((req, res, next) => {
+  res.set('Content-Type', 'application/vnd.api+json')
+  next()
+})
+
 app.use(DBConnection)
 
 module.exports = { app, serverless }

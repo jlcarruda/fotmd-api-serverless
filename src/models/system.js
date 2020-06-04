@@ -17,6 +17,7 @@ const schema = new Schema({
   requirements: {
     machine_types: [{ type: String, enum: MachineTypes }]
   },
+  test: { type: 'ObjectId', ref: 'User' },
   attributes_bonuses: [ AttributeBonusSchema ],
   created_at: { type: Date, default: new Date() },
   updated_at: { type: Date, default: new Date() }
