@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Joi = require('@hapi/joi')
 const { CustomError, BadRequestError } = require('../errors')
 const { ModelsByResourceType, ResourceTypes } = require('../enums')
 const { ObjectId } = mongoose.Types
@@ -13,43 +14,27 @@ function isValidId(id) {
   }
 }
 
+function isRelation(type) {
+  return ['ObjectId', ObjectId].includes(type)
+}
+
 function validateResourceObject(attributes, resourceType) {
   try {
     const { schema } = mongoose.models[ModelsByResourceType[resourceType]]
     const schemaKeys = Object.keys(schema.obj)
-    console.log('Schema Keys', schemaKeys)
+
     const relationships = schemaKeys.filter(k => {
       if (k === '_id') return false
-
       let attributeValue = schema.obj[k]
-      console.log('attribute value', attributeValue)
 
-      /**
-       * Its a RELATION if
-       *
-       *   Populated
-       *
-       *   - Is another Object with _id attribute
-       *   - Is array with
-       *      - Objects with _id attribute
-       *
-       *   OR not Populated
-       *
-       *   - Is a plain ObjectId value, and its not the _id key
-       *   - Is array with
-       *      - ObjectId s inside
-       */
-      console.log('its a relation?', ['ObjectId', ObjectId].includes(attributeValue.type) || (Array.isArray(attributeValue) && ['ObjectId', ObjectId].includes(attributeValue[0].type)))
-
-      return ['ObjectId', ObjectId].includes(attributeValue.type) || (Array.isArray(attributeValue) && ['ObjectId', ObjectId].includes(attributeValue[0].type))
+      return isRelation(attributeValue.type) || (Array.isArray(attributeValue) && isRelation(attributeValue[0].type))
     }).map(relationKey => {
       const attribute = attributes[relationKey]
       delete attributes[relationKey]
-      if (!attribute) return
+      if (!attribute || attribute.length === 0) return
       const { _id, ...relAttributes } = attribute
       const schemaRelation = schema.obj[relationKey]
-      console.log("relation Key", relationKey)
-      console.log("schema relation", schemaRelation)
+
       let type;
       if (Array.isArray(schemaRelation)) {
         type = ResourceTypes[schemaRelation[0].ref]
@@ -67,8 +52,6 @@ function validateResourceObject(attributes, resourceType) {
     const respObj = {
       attributes
     }
-
-    console.log("relationships", relationships)
 
     if (relationships && relationships.length > 0) {
       respObj.relationships = relationships
@@ -97,7 +80,13 @@ function mountResponseObject(dbData, resourceType) {
   }
 }
 
-module.exports.JSONApiResponseWrapper = ({ req, res, next, dbData, resourceType, successStatus = 200 }, meta)  => {
+/**
+ * It wraps the database result from a query into a properly JSON:API response, with data, relationships, etc
+ * @param {Object} middleware The middleware functions (req, res, next)
+ * @param {Object} resourceParams Parameters that describes the resource
+ * @param {*} meta JSON:API Meta object to be added into the response
+ */
+function responseWrapper ({ req, res, next }, { dbData, resourceType, successStatus = 200 }, meta) {
   try {
     if (!req || !res || !next || !dbData || !resourceType) throw new Error("Wrong or missing arguments for wrapper")
 
@@ -121,4 +110,46 @@ module.exports.JSONApiResponseWrapper = ({ req, res, next, dbData, resourceType,
     if (error instanceof CustomError) return next(error)
     throw error
   }
+}
+
+/**
+ * A Express middleware to check if the payload passed through the body is valid or not
+ * @param {Object} req Express Request object
+ * @param {Function} res Express Response function
+ * @param {Function} next Express next function
+ */
+function payloadValidator(req, res, next) {
+  if (!req.body && !req.params) return next()
+
+  if (req.body) {
+    console.log("BODY", req.body)
+    const payloadSchema = Joi.object({
+      data: Joi.object({
+        type: Joi.string().required(),
+        attributes: Joi.object()
+      })
+    })
+
+    const { error } = payloadSchema.validate(req.body)
+    if (error) return next(new BadRequestError("Invalid payload"))
+  }
+
+  if (req.params) {
+    const paramsSchema = Joi.object({
+      filter: Joi.object().allow(null),
+      sort: Joi.string().allow(null),
+      page: Joi.number().allow(null),
+      id: Joi.number().allow(null)
+    })
+
+    const { error } = paramsSchema.validate(req.params)
+    if (error) return next(new BadRequestError("Invalid query parameters"))
+  }
+
+  next()
+}
+
+module.exports = {
+  responseWrapper,
+  payloadValidator
 }

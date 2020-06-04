@@ -2,7 +2,7 @@ const { app, serverless } = require('../header')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
 const { ErrorHandler } = require('../middlewares')
-const { JSONApiResponseWrapper } = require('../utils/wrappers')
+const { responseWrapper } = require('../utils/jsonapi')
 
 const { User } = require('../models')
 
@@ -18,33 +18,18 @@ app.post('/users/auth', async (req, res, next) => {
       username: user.username
     })
     const { password, ...attributes } = user._doc
-    JSONApiResponseWrapper({
-      req,
-      res,
-      next,
-      dbData: attributes,
-      resourceType: 'users'
-    }, {
-      token
-    })
-    // const { _id, password, characters, tables_participating, tables_owned, ...otherAttributes } = user._doc
-    // res.status(200).json({
-    //   data: {
-    //     type: "users",
-    //     id: _id,
-    //     attributes: {
-    //       ...otherAttributes
-    //     },
-    //     relationships: {
-    //       tables_participating,
-    //       tables_owned,
-    //       characters
-    //     }
-    //   },
-    //   meta: {
-    //     token
-    //   }
-    // })
+    responseWrapper(
+      {
+        req,
+        res,
+        next
+      }, {
+        dbData: attributes,
+        resourceType: 'users'
+      }, {
+        token
+      }
+    )
   } catch (error) {
     next(error)
   }

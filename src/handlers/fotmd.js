@@ -1,7 +1,7 @@
 const { app, serverless } = require('../header')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
 const { ErrorHandler, needsAuthorization } = require('../middlewares')
-const { JSONApiResponseWrapper } = require('../utils/wrappers')
+const { responseWrapper } = require('../utils/jsonapi')
 
 const { System } = require('../models')
 
@@ -20,10 +20,11 @@ const { System } = require('../models')
 app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
   try {
     const dbData = await System.find({}).lean()
-    JSONApiResponseWrapper({
+    responseWrapper( {
       req,
       res,
-      next,
+      next
+    }, {
       dbData,
       resourceType: 'systems'
     })
@@ -36,10 +37,11 @@ app.get('/fotmd/systems/:id', needsAuthorization, async (req, res, next) => {
   const { id } = req.params
   try {
     const dbData = await System.findOne({ _id: id }).lean()
-    JSONApiResponseWrapper({
+    responseWrapper( {
       req,
       res,
-      next,
+      next
+    }, {
       dbData,
       resourceType: 'systems'
     })
