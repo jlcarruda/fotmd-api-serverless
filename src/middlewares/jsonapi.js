@@ -95,7 +95,7 @@ function mountResponseObject(data, resourceType) {
 function responseWrapper ({ req, res, next }, { data, resourceType = null, successStatus = 200 }, meta) {
   try {
     console.log("resourceType", req.resourceType)
-    if (!req || !res || !next || !data || (!resourceType && req && !req.resourceType)) throw new Error("Wrong or missing arguments for wrapper")
+    if (!req || !res || !next || !data || (!resourceType && req && !req.resourceType)) throw new Error("Wrong or missing arguments for responseWrapper")
 
     if (!resourceType) resourceType = req.resourceType
 
@@ -167,6 +167,18 @@ function payloadValidator(req, res, next) {
   }
 
   next()
+}
+
+function setResourceTypes(inResourceType, outResourceType) {
+  if (!inResourceType || !outResourceType) {
+    throw new Error("Wrong or missing arguments for setResourceTypes")
+  } else if (!ResourceTypes.includes(inResourceType) || !ResourceTypes.includes(outResourceType)) {
+    throw new Error(`Resource types passed to setResourceTypes are not allowed. Expected [${ResourceTypes}]. Received '${inResourceType}' and '${outResourceType}'`)
+  }
+
+  return (req, res, next) => {
+
+  }
 }
 
 module.exports = {

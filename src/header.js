@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const helmet = require('helmet')
 const express = require('express')
 
-const { payloadValidator } = require('./utils/jsonapi')
+const { payloadValidator } = require('./middlewares/jsonapi')
 const { DBConnection } = require('./middlewares')
 const { BadRequestError } = require('./errors')
 

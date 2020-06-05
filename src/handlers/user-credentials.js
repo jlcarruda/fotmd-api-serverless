@@ -2,7 +2,7 @@ const { app, serverless } = require('../header')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
 const { ErrorHandler } = require('../middlewares')
-const { responseWrapper } = require('../utils/jsonapi')
+const { responseWrapper } = require('../middlewares/jsonapi')
 
 const { User } = require('../models')
 
