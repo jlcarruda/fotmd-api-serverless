@@ -174,7 +174,7 @@ function setResourceTypes(inResourceType, outResourceType = null) {
   return [(req, res, next) => {
     if (!inResourceType) {
       throw new Error("Wrong or missing arguments for setResourceTypes")
-    } else if (!ResourceTypes.includes(inResourceType) || !ResourceTypes.includes(outResourceType)) {
+    } else if (!ResourceTypes.includes(inResourceType) || (outResourceType && !ResourceTypes.includes(outResourceType))) {
       return next(Error(`Resource types passed to setResourceTypes are not allowed. Expected [${ResourceTypes}]. Received '${inResourceType}' and '${outResourceType}'`))
     }
     req.responseResourceType = outResourceType || inResourceType

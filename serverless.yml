@@ -86,10 +86,10 @@ functions:
     handler: src/handlers/fotmd.handler
     events:
       - http:
-          path: fotmd/systems
+          path: systems
           method: GET
       - http:
-          path: fotmd/systems/{id}
+          path: systems/{id}
           method: GET
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

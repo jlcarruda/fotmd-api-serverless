@@ -1,7 +1,5 @@
 const { app, serverless } = require('../header')
-const { FailedAuthError, FailedSignUpError } = require('../errors')
-const { ErrorHandler, needsAuthorization } = require('../middlewares')
-const { responseWrapper } = require('../utils/jsonapi')
+const { ErrorHandler, needsAuthorization, responseWrapper, setResourceTypes} = require('../middlewares')
 
 const { System } = require('../models')
 
@@ -17,7 +15,9 @@ const { System } = require('../models')
   * GET /fotmd/components/:id
  */
 
-app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
+app.use(setResourceTypes('systems'))
+
+app.get('/systems', needsAuthorization, async (req, res, next) => {
   try {
     const data = await System.find({}).lean()
     responseWrapper( {
@@ -25,15 +25,14 @@ app.get('/fotmd/systems', needsAuthorization, async (req, res, next) => {
       res,
       next
     }, {
-      data,
-      resourceType: 'systems'
+      data
     })
   } catch (error) {
     next(error)
   }
 })
 
-app.get('/fotmd/systems/:id', needsAuthorization, async (req, res, next) => {
+app.get('/systems/:id', needsAuthorization, async (req, res, next) => {
   const { id } = req.params
   try {
     const data = await System.findOne({ _id: id }).lean()
@@ -42,8 +41,7 @@ app.get('/fotmd/systems/:id', needsAuthorization, async (req, res, next) => {
       res,
       next
     }, {
-      data,
-      resourceType: 'systems'
+      data
     })
   } catch (error) {
     next(error)
