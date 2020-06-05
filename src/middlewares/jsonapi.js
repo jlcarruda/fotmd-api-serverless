@@ -171,13 +171,12 @@ function payloadValidator(req, res, next) {
 }
 
 function setResourceTypes(inResourceType, outResourceType = null) {
-  if (!inResourceType) {
-    throw new Error("Wrong or missing arguments for setResourceTypes")
-  } else if (!ResourceTypes.includes(inResourceType) || !ResourceTypes.includes(outResourceType)) {
-    throw new Error(`Resource types passed to setResourceTypes are not allowed. Expected [${ResourceTypes}]. Received '${inResourceType}' and '${outResourceType}'`)
-  }
-
   return [(req, res, next) => {
+    if (!inResourceType) {
+      throw new Error("Wrong or missing arguments for setResourceTypes")
+    } else if (!ResourceTypes.includes(inResourceType) || !ResourceTypes.includes(outResourceType)) {
+      return next(Error(`Resource types passed to setResourceTypes are not allowed. Expected [${ResourceTypes}]. Received '${inResourceType}' and '${outResourceType}'`))
+    }
     req.responseResourceType = outResourceType || inResourceType
     req.resourceType = inResourceType
     next()

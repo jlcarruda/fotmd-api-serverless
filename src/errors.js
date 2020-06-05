@@ -25,7 +25,7 @@ class BadRequestError extends CustomError {
 }
 
 class InternalServerError extends Error {
-  code = 'ER-500-'
+  code = 'ER-500-INT-01'
 
   constructor(message) {
     super(message)
