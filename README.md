@@ -43,11 +43,11 @@ This project was born with the goal to create an API to handle the requests made
 
 ## Lambdas & Routes
 * user-credentials
-  * POST /user/auth <u>*(DONE)*</u>
-  * POST /user/signup <u>*(DONE)*</u>
+  * POST /tokens <u>*(DONE)*</u>
+  * POST /user <u>*(DONE)*</u>
   * POST /user/logout
 * user-info
-  * GET /user/profile
+  * GET /user
   * GET /user/tables/owned
   * GET /user/tables/joined
 * characters

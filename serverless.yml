@@ -67,12 +67,6 @@ package:
     - .gitignore
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          path: /
-          method: get
   user-credentials:
     handler: src/handlers/user-credentials.handler
     events:
@@ -80,7 +74,7 @@ functions:
           path: tokens
           method: POST
       - http:
-          path: users/signup
+          path: users
           method: POST
   characters:
     handler: src/handlers/characters.handler

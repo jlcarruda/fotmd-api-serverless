@@ -148,10 +148,11 @@ function payloadValidator(req, res, next) {
     if (error) return next(new BadRequestError("Invalid payload"))
 
     const { type, id, attributes } = req.body.data
+    if (type !== req.resourceType) return next(new BadRequestError("Resource Types mismatch"))
+
     req.body = attributes
 
     if (id) req.body.id = id
-    req.resourceType = type
   }
 
   if (!isEmptyObject(req.params)) {
@@ -169,19 +170,22 @@ function payloadValidator(req, res, next) {
   next()
 }
 
-function setResourceTypes(inResourceType, outResourceType) {
-  if (!inResourceType || !outResourceType) {
+function setResourceTypes(inResourceType, outResourceType = null) {
+  if (!inResourceType) {
     throw new Error("Wrong or missing arguments for setResourceTypes")
   } else if (!ResourceTypes.includes(inResourceType) || !ResourceTypes.includes(outResourceType)) {
     throw new Error(`Resource types passed to setResourceTypes are not allowed. Expected [${ResourceTypes}]. Received '${inResourceType}' and '${outResourceType}'`)
   }
 
-  return (req, res, next) => {
-
-  }
+  return [(req, res, next) => {
+    req.responseResourceType = outResourceType || inResourceType
+    req.resourceType = inResourceType
+    next()
+  }, payloadValidator]
 }
 
 module.exports = {
   responseWrapper,
+  setResourceTypes,
   payloadValidator
 }

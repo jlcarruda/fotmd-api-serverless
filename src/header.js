@@ -22,8 +22,6 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(payloadValidator)
-
 app.use(DBConnection)
 
 module.exports = { app, serverless }

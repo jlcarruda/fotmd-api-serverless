@@ -1,12 +1,11 @@
 const { app, serverless } = require('../header')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
-const { ErrorHandler } = require('../middlewares')
-const { responseWrapper } = require('../middlewares/jsonapi')
+const { ErrorHandler, responseWrapper, setResourceTypes } = require('../middlewares')
 
 const { User } = require('../models')
 
-app.post('/tokens', async (req, res, next) => {
+app.post('/tokens',setResourceTypes('tokens', 'users') , async (req, res, next) => {
   const { username } = req.body
 
   try {
@@ -34,7 +33,7 @@ app.post('/tokens', async (req, res, next) => {
   }
 })
 
-app.post('/users/signup', async (req, res, next) => {
+app.post('/users', setResourceTypes('users'), async (req, res, next) => {
   const { username } = req.body
 
   try {

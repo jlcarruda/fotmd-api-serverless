@@ -6,13 +6,14 @@ const {
   FailedSignUpError,
   FailedAuthError,
   NotAuthorizedError,
-  BadRequestError
+  BadRequestError,
+  InternalServerError
 } = require('../errors')
 
 module.exports = (err, req, res, next) => {
 
+  let status = 500
   if (err instanceof CustomError) {
-    let status = 500
     switch(err.constructor.name) {
 
       case FailedSignUpError.name:
@@ -56,5 +57,17 @@ module.exports = (err, req, res, next) => {
     })
   }
 
-  throw err
+  const error = new InternalServerError("Internal Error. Please try again later or contact the admin")
+  const { id, code, message } = error
+
+  res.status(status).json({
+    erros: [
+      {
+        id,
+        code,
+        message
+      }
+    ]
+  })
+  throw error
 }
