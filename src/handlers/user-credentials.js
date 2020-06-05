@@ -49,23 +49,13 @@ app.post('/users', setResourceTypes('users'), async (req, res, next) => {
       username
     })
 
-    const { password, _id, characters, tables_participating, tables_owned, ...otherAttributes } = userCreated._doc
-    res.status(200).json({
-      data: {
-        type: "users",
-        id: _id,
-        attributes: {
-          ...otherAttributes
-        },
-        relationships: {
-          tables_participating,
-          tables_owned,
-          characters
-        }
-      },
-      meta: {
-        token
-      }
+    const { password, _v, ...data } = userCreated._doc
+    responseWrapper({
+      req, res, next
+    },{
+      data
+    },{
+      token
     })
   } catch(error) {
     next(error)
