@@ -45,7 +45,6 @@ function validateResourceObject(attributes, resourceType) {
           type = ResourceTypesByModel[schemaRelation.ref]
         }
 
-        console.log("TYPE", type)
         return {
           type,
           id: _id,
@@ -136,7 +135,6 @@ function payloadValidator(req, res, next) {
   if (isEmptyObject(req.body) && isEmptyObject(req.params)) return next()
 
   if (!isEmptyObject(req.body)) {
-    console.log("BODY", req.body)
     const payloadSchema = Joi.object({
       data: Joi.object({
         id: Joi.string().allow(null),

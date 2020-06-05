@@ -5,7 +5,8 @@ const {
   CustomError,
   FailedSignUpError,
   FailedAuthError,
-  NotAuthorizedError
+  NotAuthorizedError,
+  BadRequestError
 } = require('../errors')
 
 module.exports = (err, req, res, next) => {
@@ -18,6 +19,9 @@ module.exports = (err, req, res, next) => {
       case FailedAuthError.name:
       case NotAuthorizedError.name:
         status = 401
+        break;
+      case BadRequestError.name:
+        status = 400
         break;
     }
 

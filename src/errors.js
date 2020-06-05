@@ -23,7 +23,6 @@ class BadRequestError extends CustomError {
   code = 'ER-400-REQ-01'
 }
 
-
 module.exports = {
   CustomError,
   FailedAuthError,
