@@ -76,13 +76,13 @@ function mountResponseObject(data, resourceType) {
 
   const response = {
     data: {
+      id: _id || undefined,
       type: resourceObject.type || resourceType,
       attributes: resourceObject.attributes,
       relationships: resourceObject.relationships || undefined
     }
   }
 
-  if (_id) response.id = _id
   return response
 }
 
@@ -104,7 +104,9 @@ function responseWrapper ({ req, res, next }, { data, resourceType = null, succe
     if (!Array.isArray(data)) {
       respObject = mountResponseObject(data, resourceType)
     } else {
-      respObject = data.map(doc => mountResponseObject(doc, resourceType))
+      respObject = {
+        data: data.map(doc => ({ ...mountResponseObject(doc, resourceType).data }))
+      }
     }
 
     if (meta){
