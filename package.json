@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "handler.js",
+  "engines": {
+    "node": "12.16.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "sls offline --noPrependStageInUrl",
+    "dev": "export SLS_DEBUG=* && ./node_modules/.bin/serverless offline --noPrependStageInUrl",
+    "debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline --noPrependStageInUrl -s dev",
     "deploy": "sls deploy"
   },
   "author": "",
@@ -23,6 +27,7 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "serverless": "^1.72.0",
     "serverless-offline": "^6.3.0"
   }
 }
