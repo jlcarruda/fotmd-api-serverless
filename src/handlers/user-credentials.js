@@ -5,7 +5,7 @@ const { ErrorHandler, responseWrapper, setResourceTypes } = require('../middlewa
 
 const { User } = require('../models')
 
-app.post('/tokens',setResourceTypes('tokens', 'users') , async (req, res, next) => {
+app.post('/tokens',setResourceTypes('users', 'tokens') , async (req, res, next) => {
   const { username } = req.body
 
   try {
