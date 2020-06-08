@@ -68,6 +68,7 @@ function validateResourceObject(attributes, resourceType) {
 }
 
 function mountResponseObject(data, resourceType) {
+  if (!data) return { data }
   const { _id, ...attributes } = data
 
   if (_id && !isValidId(_id)) throw new Error("Data passed seems to be corrupted or incomplete")
@@ -94,8 +95,8 @@ function mountResponseObject(data, resourceType) {
  */
 function responseWrapper ({ req, res, next }, { data, resourceType = null, successStatus = 200 }, meta) {
   try {
-    console.log("resourceType", req.resourceType)
-    if (!req || !res || !next || !data || (!resourceType && req && !req.resourceType)) throw new Error("Wrong or missing arguments for responseWrapper")
+    const hasRequiredParameters = !req || !res || !next || (!resourceType && req && !req.resourceType)
+    if (hasRequiredParameters) throw new Error(`Wrong or missing arguments for responseWrapper: \n ${req.resourceType} \n Data: ${data} \n resourceType: ${resourceType} \n Meta: ${meta}`)
 
     if (!resourceType) resourceType = req.resourceType
 
@@ -160,7 +161,7 @@ function payloadValidator(req, res, next) {
       filter: Joi.object().allow(null),
       sort: Joi.string().allow(null),
       page: Joi.number().allow(null),
-      id: Joi.number().allow(null)
+      id: Joi.string().allow(null)
     })
 
     const { error } = paramsSchema.validate(req.params)

@@ -59,7 +59,7 @@ module.exports = (err, req, res, next) => {
 
   const error = new InternalServerError("Internal Error. Please try again later or contact the admin")
   const { id, code, message } = error
-
+  console.error("Error who caused the 500 Code: \n", err)
   res.status(status).json({
     erros: [
       {
