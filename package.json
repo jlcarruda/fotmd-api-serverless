@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "handler.js",
+  "engines": {
+    "node": "12.16.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "sls offline --noPrependStageInUrl",
+    "dev": "export SLS_DEBUG=* && ./node_modules/.bin/serverless offline --noPrependStageInUrl",
+    "debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline --noPrependStageInUrl -s dev",
     "deploy": "sls deploy"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
@@ -22,6 +27,7 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "serverless": "^1.72.0",
     "serverless-offline": "^6.3.0"
   }
 }

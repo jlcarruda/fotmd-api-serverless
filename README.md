@@ -43,11 +43,11 @@ This project was born with the goal to create an API to handle the requests made
 
 ## Lambdas & Routes
 * user-credentials
-  * POST /user/auth <u>*(DONE)*</u>
-  * POST /user/signup <u>*(DONE)*</u>
+  * POST /tokens <u>*(DONE)*</u>
+  * POST /user <u>*(DONE)*</u>
   * POST /user/logout
 * user-info
-  * GET /user/profile
+  * GET /user
   * GET /user/tables/owned
   * GET /user/tables/joined
 * characters
@@ -59,14 +59,14 @@ This project was born with the goal to create an API to handle the requests made
   * GET /table/:id/characters
   * GET /table/:id/info
 * fotmd
-  * GET /fotmd/machine_types
-  * GET /fotmd/machine_types/:id
-  * GET /fotmd/machine_models
-  * GET /fotmd/machine_models/:id
-  * GET /fotmd/systems <u>*(DONE)*</u>
-  * GET /fotmd/systems/:id <u>*(DONE)*</u>
-  * GET /fotmd/components
-  * GET /fotmd/components/:id
+  * GET /machine_types
+  * GET /machine_types/:id
+  * GET /machine_models
+  * GET /machine_models/:id
+  * GET /systems <u>*(DONE)*</u>
+  * GET /systems/:id <u>*(DONE)*</u>
+  * GET /components
+  * GET /components/:id
 * dm
   * POST /dm/auth
   * POST /dm/logout

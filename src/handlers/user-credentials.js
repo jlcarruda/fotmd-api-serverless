@@ -1,11 +1,11 @@
 const { app, serverless } = require('../header')
 const { sign } = require('../utils/jwt')
 const { FailedAuthError, FailedSignUpError } = require('../errors')
-const { ErrorHandler } = require('../middlewares')
+const { ErrorHandler, responseWrapper, setResourceTypes } = require('../middlewares')
 
 const { User } = require('../models')
 
-app.post('/users/auth', async (req, res, next) => {
+app.post('/tokens',setResourceTypes('users', 'tokens') , async (req, res, next) => {
   const { username } = req.body
 
   try {
@@ -17,30 +17,23 @@ app.post('/users/auth', async (req, res, next) => {
       username: user.username
     })
 
-    const { _id, password, characters, tables_participating, tables_owned, ...otherAttributes } = user._doc
-    res.status(200).json({
-      data: {
-        type: "users",
-        id: _id,
-        attributes: {
-          ...otherAttributes
-        },
-        relationships: {
-          tables_participating,
-          tables_owned,
-          characters
+    responseWrapper(
+      {
+        req,
+        res,
+        next
+      }, {
+        data: {
+          token
         }
-      },
-      meta: {
-        token
       }
-    })
+    )
   } catch (error) {
     next(error)
   }
 })
 
-app.post('/users/signup', async (req, res, next) => {
+app.post('/users', setResourceTypes('users'), async (req, res, next) => {
   const { username } = req.body
 
   try {
@@ -56,23 +49,13 @@ app.post('/users/signup', async (req, res, next) => {
       username
     })
 
-    const { password, _id, characters, tables_participating, tables_owned, ...otherAttributes } = userCreated._doc
-    res.status(200).json({
-      data: {
-        type: "users",
-        id: _id,
-        attributes: {
-          ...otherAttributes
-        },
-        relationships: {
-          tables_participating,
-          tables_owned,
-          characters
-        }
-      },
-      meta: {
-        token
-      }
+    const { password, _v, ...data } = userCreated._doc
+    responseWrapper({
+      req, res, next
+    },{
+      data
+    },{
+      token
     })
   } catch(error) {
     next(error)
