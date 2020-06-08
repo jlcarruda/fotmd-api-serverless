@@ -7,6 +7,7 @@ const express = require('express')
 const { payloadValidator } = require('./middlewares/jsonapi')
 const { DBConnection } = require('./middlewares')
 const { BadRequestError } = require('./errors')
+const { MachineModel } = require('./models')
 
 const app = express()
 

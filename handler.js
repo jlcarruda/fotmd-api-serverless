@@ -1,12 +1,9 @@
-const sls = require('serverless-http')
-const express = require('express')
+const { app, serverless } = require('./src/header')
 
-const app = express()
-
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   res.send({
     message: 'Go Serverless v1.0! Your function executed successfully!'
   })
 })
 
-module.exports.hello = sls(app)
+module.exports.migrate = serverless(app)
