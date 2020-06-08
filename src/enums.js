@@ -6,10 +6,12 @@ module.exports = {
     User: 'users',
     Character: 'characters',
     System: 'systems',
+    MachineModel: 'machine_models'
   },
   ModelsByResourceType: {
     users: 'User',
     characters: 'Character',
-    systems: 'System'
+    systems: 'System',
+    machine_models: 'MachineModel'
   }
 }

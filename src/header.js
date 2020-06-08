@@ -7,6 +7,7 @@ const express = require('express')
 const { payloadValidator } = require('./middlewares/jsonapi')
 const { DBConnection } = require('./middlewares')
 const { BadRequestError } = require('./errors')
+const { MachineModel } = require('./models')
 
 const app = express()
 
@@ -17,8 +18,11 @@ app.use(helmet())
 // JSON API content-type required header
 app.use((req, res, next) => {
   const { accept } = req.headers
-  if (accept !== "application/vnd.api+json") return next(new BadRequestError("Proper Accept Header is missing"))
+  const contentType = req.headers["content-type"]
   res.set('Content-Type', 'application/vnd.api+json')
+  if (accept !== "application/vnd.api+json" || contentType !== "application/vnd.api+json") {
+    return next(new BadRequestError("Accept or/and Content-Type Headers are missing or incorrect"))
+  }
   next()
 })
 

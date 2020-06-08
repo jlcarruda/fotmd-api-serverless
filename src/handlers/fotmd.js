@@ -1,7 +1,7 @@
 const { app, serverless } = require('../header')
 const { ErrorHandler, needsAuthorization, responseWrapper, setResourceTypes} = require('../middlewares')
 
-const { System } = require('../models')
+const { System, MachineModel } = require('../models')
 
 /**
  * * fotmd
@@ -21,12 +21,8 @@ app.get('/systems', needsAuthorization, async (req, res, next) => {
   try {
     const data = await System.find({}).lean()
     responseWrapper( {
-      req,
-      res,
-      next
-    }, {
-      data
-    })
+      req, res, next
+    }, { data })
   } catch (error) {
     next(error)
   }
@@ -37,13 +33,32 @@ app.get('/systems/:id', needsAuthorization, async (req, res, next) => {
   try {
     const data = await System.findOne({ _id: id }).lean()
     responseWrapper( {
-      req,
-      res,
-      next
-    }, {
-      data
-    })
+      req, res, next
+    }, { data })
   } catch (error) {
+    next(error)
+  }
+})
+
+app.get('/machine_models', needsAuthorization, async (req, res, next) => {
+   try {
+    const data = await MachineModel.find({}).lean()
+    responseWrapper({
+      req, res, next
+    }, { data })
+   } catch(error) {
+     next(error)
+   }
+})
+
+app.get('/machine_models/:id', needsAuthorization, async (req, res, next) => {
+  const { id } = req.params
+  try {
+   const data = await MachineModel.findOne({ _id: id }).lean()
+   responseWrapper({
+     req, res, next
+   }, { data })
+  } catch(error) {
     next(error)
   }
 })

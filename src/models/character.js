@@ -28,7 +28,7 @@ const schema = new Schema({
   },
   system: { type: ObjectId, ref: 'System' },
   system_level: { type: Number },
-  // model: { type: ObjectId, ref: 'MachineModel' },
+  model: { type: ObjectId, ref: 'MachineModel' },
   // motherboard: { type: ObjectId, ref: 'Motherboard' },
   // cpu: { type: ObjectId, ref: 'Cpu' },
   created_at: { type: Date, default: new Date() },

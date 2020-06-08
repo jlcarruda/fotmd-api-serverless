@@ -67,6 +67,12 @@ package:
     - .gitignore
 
 functions:
+  # migrate:
+  #   handler: handler.migrate
+  #   events:
+  #     - http:
+  #         path: /
+  #         method: GET
   user-credentials:
     handler: src/handlers/user-credentials.handler
     events:
@@ -90,6 +96,12 @@ functions:
           method: GET
       - http:
           path: systems/{id}
+          method: GET
+      - http:
+          path: machine_models
+          method: GET
+      - http:
+          path: machine_models/{id}
           method: GET
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
