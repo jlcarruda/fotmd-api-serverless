@@ -5,7 +5,7 @@ This project was born with the goal to create an API to handle the requests made
 
 ## Roadmap
 #### Features
-* Payload validation
+* Payload validation  <u>*(Partially DONE. Needs per route validation)*</u>
 * Response validation
 * Models
   * User Model <u>*(DONE)*</u>
@@ -15,9 +15,13 @@ This project was born with the goal to create an API to handle the requests made
   * Character Creation models
     * System Model <u>*(DONE)*</u>
     * Machine Type Model
-    * Machine Model
+    * Machine Model <u>*(DONE)*</u>
 * Error Handler <u>*(DONE)*</u>
 * Custom Errors <u>*(DONE)*</u>
+
+#### Improvements
+* Connection with DocumentDB
+* Table logic with SQS
 
 <!-- * Database Connection setup function <u>*(DONE)*</u>
 * Decorators <u>*(1/2)*</u>
@@ -51,8 +55,8 @@ This project was born with the goal to create an API to handle the requests made
   * GET /user/tables/owned
   * GET /user/tables/joined
 * characters
-  * GET /user/characters
-  * GET /user/characters/:id
+  * GET /user/characters    <u>*(DONE)*</u>
+  * GET /user/characters/:id    <u>*(DONE)*</u>
 * tables (possible Amazon SQS)
   * POST /table/join/:id
   * POST /table/leave/:id
@@ -61,8 +65,8 @@ This project was born with the goal to create an API to handle the requests made
 * fotmd
   * GET /machine_types
   * GET /machine_types/:id
-  * GET /machine_models
-  * GET /machine_models/:id
+  * GET /machine_models <u>*(DONE)*</u>
+  * GET /machine_models/:id <u>*(DONE)*</u>
   * GET /systems <u>*(DONE)*</u>
   * GET /systems/:id <u>*(DONE)*</u>
   * GET /components
